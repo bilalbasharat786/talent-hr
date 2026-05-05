@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\Notification;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+
 
 class CompanyVerificationController extends Controller
 {
@@ -51,6 +53,16 @@ class CompanyVerificationController extends Controller
             'status' => 'approved',
         ]);
 
+        if ($company->owner) {
+            Notification::create([
+                'user_id' => $company->owner->id,
+                'company_id' => $company->id,
+                'type' => 'company_verification',
+                'title' => 'Company approved',
+                'message' => "Your company was approved with {$request->trust_level} trust level.",
+            ]);
+        }
+
         ActivityLogger::log(
             'approve',
             'company_verification',
@@ -79,6 +91,16 @@ class CompanyVerificationController extends Controller
             'status' => 'rejected',
         ]);
 
+        if ($company->owner) {
+            Notification::create([
+                'user_id' => $company->owner->id,
+                'company_id' => $company->id,
+                'type' => 'company_verification',
+                'title' => 'Company rejected',
+                'message' => "Your company verification was rejected. Reason: {$request->reason}",
+            ]);
+        }
+
         ActivityLogger::log(
             'reject',
             'company_verification',
@@ -92,4 +114,3 @@ class CompanyVerificationController extends Controller
         ]);
     }
 }
-

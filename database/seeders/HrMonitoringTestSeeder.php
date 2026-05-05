@@ -25,7 +25,7 @@ class HrMonitoringTestSeeder extends Seeder
             ['hr_id' => $hr->id, 'title' => 'Laravel Developer Intern'],
             [
                 'company_id' => $company->id,
-                'status' => 'active',
+                'status' => 'live',
             ]
         );
 
