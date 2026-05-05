@@ -7,6 +7,7 @@ use App\Models\ActivityLog;
 use App\Models\AssessmentSubmission;
 use App\Models\Interview;
 use App\Models\JobApplication;
+use App\Models\Notification;
 use App\Models\Task;
 use App\Services\ActivityLogger;
 use Carbon\Carbon;
@@ -86,9 +87,22 @@ class ApplicationController extends Controller
     {
         $this->authorizeApplicationOwnership($request, $application);
 
+        if ($application->status !== 'passed') {
+            return response()->json([
+                'message' => 'Candidate must pass the assessment before shortlisting.',
+            ], 422);
+        }
+
         $application->update([
             'status' => 'shortlisted',
             'rejection_reason' => null,
+        ]);
+
+        Notification::create([
+            'user_id' => $application->candidate_id,
+            'type' => 'system_alert',
+            'title' => 'Application shortlisted',
+            'message' => 'You have been shortlisted for the next stage.',
         ]);
 
         ActivityLogger::log(
@@ -117,6 +131,13 @@ class ApplicationController extends Controller
             'rejection_reason' => $request->reason,
         ]);
 
+        Notification::create([
+            'user_id' => $application->candidate_id,
+            'type' => 'system_alert',
+            'title' => 'Application rejected',
+            'message' => "Your application was rejected. Reason: {$request->reason}",
+        ]);
+
         ActivityLogger::log(
             'reject',
             'hr_applications',
@@ -133,6 +154,12 @@ class ApplicationController extends Controller
     public function assignTask(Request $request, JobApplication $application)
     {
         $this->authorizeApplicationOwnership($request, $application);
+
+        if ($application->status !== 'shortlisted') {
+            return response()->json([
+                'message' => 'Candidate must be shortlisted before assigning second round task.',
+            ], 422);
+        }
 
         $request->validate([
             'title' => ['required', 'string', 'max:255'],
@@ -159,6 +186,13 @@ class ApplicationController extends Controller
 
         $application->update([
             'status' => 'second_task_assigned',
+        ]);
+
+        Notification::create([
+            'user_id' => $application->candidate_id,
+            'type' => 'system_alert',
+            'title' => 'Second round task assigned',
+            'message' => "A second round task has been assigned: {$task->title}",
         ]);
 
         ActivityLogger::log(
@@ -199,6 +233,17 @@ class ApplicationController extends Controller
 
         $task->update([
             'status' => $request->status,
+        ]);
+
+        $task->submissions()->latest()->first()?->update([
+            'status' => 'reviewed',
+        ]);
+
+        Notification::create([
+            'user_id' => $application->candidate_id,
+            'type' => 'system_alert',
+            'title' => 'Second round task reviewed',
+            'message' => "Your second round task was marked {$request->status}.",
         ]);
 
         ActivityLogger::log(
@@ -267,6 +312,13 @@ class ApplicationController extends Controller
 
         $application->update([
             'status' => 'interview_scheduled',
+        ]);
+
+        Notification::create([
+            'user_id' => $application->candidate_id,
+            'type' => 'system_alert',
+            'title' => 'Interview scheduled',
+            'message' => "Your interview is scheduled on {$scheduledAt->format('Y-m-d H:i')}.",
         ]);
 
         ActivityLogger::log(

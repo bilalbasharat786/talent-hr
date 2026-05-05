@@ -13,12 +13,16 @@ class AssessmentSubmission extends Model
         'status',
         'started_at',
         'submitted_at',
+        'cheating_flag',
+        'plagiarism_report',
+        'answers_payload',
     ];
 
     protected $casts = [
         'score' => 'decimal:2',
         'started_at' => 'datetime',
         'submitted_at' => 'datetime',
+        'answers_payload' => 'array',
     ];
 
     public function assessment()

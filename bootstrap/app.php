@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         'super_admin' => \App\Http\Middleware\SuperAdminMiddleware::class,
         'company_owner' => \App\Http\Middleware\CompanyOwnerMiddleware::class,
         'hr_user' => \App\Http\Middleware\HrUserMiddleware::class,
+        'candidate_user' => \App\Http\Middleware\CandidateUserMiddleware::class,
 
 
     ]);

@@ -24,5 +24,9 @@ class Task extends Model
     {
         return $this->belongsTo(JobApplication::class, 'application_id');
     }
-}
 
+    public function submissions()
+    {
+        return $this->hasMany(TaskSubmission::class);
+    }
+}

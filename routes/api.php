@@ -11,6 +11,14 @@ use App\Http\Controllers\Api\Admin\HrMonitoringController;
 use App\Http\Controllers\Api\Admin\FraudLogController;
 use App\Http\Controllers\Api\Admin\DashboardController;
 use App\Http\Controllers\Api\Admin\SecureFileController;
+use App\Http\Controllers\Api\Candidate\ApplicationController as CandidateApplicationController;
+use App\Http\Controllers\Api\Candidate\AssessmentController as CandidateAssessmentController;
+use App\Http\Controllers\Api\Candidate\AuthController as CandidateAuthController;
+use App\Http\Controllers\Api\Candidate\DashboardController as CandidateDashboardController;
+use App\Http\Controllers\Api\Candidate\InternshipController as CandidateInternshipController;
+use App\Http\Controllers\Api\Candidate\NotificationController as CandidateNotificationController;
+use App\Http\Controllers\Api\Candidate\ProfileController as CandidateProfileController;
+use App\Http\Controllers\Api\Candidate\TaskController as CandidateTaskController;
 use App\Http\Controllers\Api\Company\AuthController as CompanyAuthController;
 use App\Http\Controllers\Api\Company\DashboardController as CompanyDashboardController;
 use App\Http\Controllers\Api\Company\ProfileController as CompanyProfileController;
@@ -113,6 +121,30 @@ Route::prefix('company')->group(function () {
 
 
 
+    });
+});
+
+Route::prefix('candidate')->group(function () {
+    Route::post('/login', [CandidateAuthController::class, 'login']);
+
+    Route::middleware(['auth:sanctum', 'candidate_user'])->group(function () {
+        Route::get('/me', [CandidateAuthController::class, 'me']);
+        Route::post('/logout', [CandidateAuthController::class, 'logout']);
+        Route::get('/dashboard', [CandidateDashboardController::class, 'index']);
+        Route::get('/profile', [CandidateProfileController::class, 'show']);
+        Route::put('/profile', [CandidateProfileController::class, 'update']);
+        Route::post('/apply', [CandidateApplicationController::class, 'apply']);
+        Route::get('/applications', [CandidateApplicationController::class, 'index']);
+        Route::get('/applications/{application}', [CandidateApplicationController::class, 'show']);
+        Route::post('/assessment/start', [CandidateAssessmentController::class, 'start']);
+        Route::post('/assessment/log', [CandidateAssessmentController::class, 'logEvent']);
+        Route::post('/assessment/submit', [CandidateAssessmentController::class, 'submit']);
+        Route::post('/task/submit', [CandidateTaskController::class, 'submit']);
+        Route::get('/internships', [CandidateInternshipController::class, 'index']);
+        Route::post('/internships', [CandidateInternshipController::class, 'store']);
+        Route::get('/notifications', [CandidateNotificationController::class, 'index']);
+        Route::post('/notifications/read-all', [CandidateNotificationController::class, 'markAllAsRead']);
+        Route::post('/notifications/{notification}/read', [CandidateNotificationController::class, 'markAsRead']);
     });
 });
 

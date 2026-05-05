@@ -19,6 +19,10 @@ class User extends Authenticatable
         'status',
         'company_id',
         'phone',
+        'skills',
+        'education',
+        'experience',
+        'candidate_rating',
         'hr_type',
         'two_factor_enabled',
         'email_verification_code',
@@ -42,6 +46,8 @@ class User extends Authenticatable
             'two_factor_enabled' => 'boolean',
             'email_verification_expires_at' => 'datetime',
             'two_factor_expires_at' => 'datetime',
+            'skills' => 'array',
+            'candidate_rating' => 'decimal:2',
         ];
     }
     public function hrJobs()
@@ -70,6 +76,21 @@ public function assessments()
 public function assessmentSubmissions()
 {
     return $this->hasMany(AssessmentSubmission::class, 'candidate_id');
+}
+
+public function internships()
+{
+    return $this->hasMany(Internship::class, 'candidate_id');
+}
+
+public function assessmentSessions()
+{
+    return $this->hasMany(AssessmentSession::class, 'candidate_id');
+}
+
+public function taskSubmissions()
+{
+    return $this->hasMany(TaskSubmission::class, 'candidate_id');
 }
 
 }
