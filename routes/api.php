@@ -20,6 +20,11 @@ use App\Http\Controllers\Api\Company\HrUserController as CompanyHrUserController
 use App\Http\Controllers\Api\Company\HiringOverviewController as CompanyHiringOverviewController;
 use App\Http\Controllers\Api\Company\NotificationController as CompanyNotificationController;
 use App\Http\Controllers\Api\Company\AccountSettingsController as CompanyAccountSettingsController;
+use App\Http\Controllers\Api\Hr\AuthController as HrAuthController;
+use App\Http\Controllers\Api\Hr\ApplicationController as HrApplicationController;
+use App\Http\Controllers\Api\Hr\AssessmentController as HrAssessmentController;
+use App\Http\Controllers\Api\Hr\DashboardController as HrDashboardController;
+use App\Http\Controllers\Api\Hr\JobController as HrJobController;
 
 
 
@@ -107,6 +112,35 @@ Route::prefix('company')->group(function () {
         Route::post('/account-settings/two-factor', [CompanyAccountSettingsController::class, 'updateTwoFactor']);
 
 
+
+    });
+});
+
+Route::prefix('hr')->group(function () {
+    Route::post('/login', [HrAuthController::class, 'login']);
+
+    Route::middleware(['auth:sanctum', 'hr_user'])->group(function () {
+        Route::get('/me', [HrAuthController::class, 'me']);
+        Route::post('/logout', [HrAuthController::class, 'logout']);
+        Route::get('/dashboard', [HrDashboardController::class, 'index']);
+        Route::get('/applications', [HrApplicationController::class, 'index']);
+        Route::get('/applications/{application}', [HrApplicationController::class, 'show']);
+        Route::post('/applications/{application}/shortlist', [HrApplicationController::class, 'shortlist']);
+        Route::post('/applications/{application}/reject', [HrApplicationController::class, 'reject']);
+        Route::post('/applications/{application}/assign-task', [HrApplicationController::class, 'assignTask']);
+        Route::post('/applications/{application}/review-task', [HrApplicationController::class, 'reviewTask']);
+        Route::post('/applications/{application}/schedule-interview', [HrApplicationController::class, 'scheduleInterview']);
+        Route::get('/assessments', [HrAssessmentController::class, 'index']);
+        Route::get('/assessments/{assessment}', [HrAssessmentController::class, 'show']);
+        Route::post('/assessments', [HrAssessmentController::class, 'store']);
+        Route::put('/assessments/{assessment}', [HrAssessmentController::class, 'update']);
+        Route::post('/assessments/{assessment}/questions', [HrAssessmentController::class, 'addQuestion']);
+        Route::get('/jobs', [HrJobController::class, 'index']);
+        Route::get('/jobs/{job}', [HrJobController::class, 'show']);
+        Route::post('/jobs', [HrJobController::class, 'store']);
+        Route::put('/jobs/{job}', [HrJobController::class, 'update']);
+        Route::post('/jobs/{job}/deactivate', [HrJobController::class, 'deactivate']);
+        
 
     });
 });

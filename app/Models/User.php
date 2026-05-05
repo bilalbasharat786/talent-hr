@@ -13,6 +13,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'email_verified_at',
         'password',
         'role',
         'status',
@@ -61,5 +62,14 @@ public function notifications()
     return $this->hasMany(Notification::class);
 }
 
+public function assessments()
+{
+    return $this->hasMany(Assessment::class, 'hr_id');
+}
+
+public function assessmentSubmissions()
+{
+    return $this->hasMany(AssessmentSubmission::class, 'candidate_id');
+}
 
 }

@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-  Schema::create('hr_jobs', function (Blueprint $table) {
+    Schema::create('assessments', function (Blueprint $table) {
     $table->id();
     $table->foreignId('hr_id')->constrained('users')->cascadeOnDelete();
-    $table->foreignId('company_id')->nullable()->constrained('companies')->nullOnDelete();
     $table->string('title');
-    $table->enum('status', ['draft', 'active', 'pending_approval', 'live', 'closed'])->default('active');
+    $table->unsignedInteger('time_limit')->nullable();
+    $table->boolean('one_attempt_only')->default(true);
+    $table->boolean('auto_submit')->default(true);
+    $table->boolean('randomize_questions')->default(false);
+    $table->enum('status', ['draft', 'active', 'locked'])->default('draft');
     $table->timestamps();
 });
 
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hr_jobs');
+        Schema::dropIfExists('assessments');
     }
 };

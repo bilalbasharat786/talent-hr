@@ -7,6 +7,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
         DB::statement("ALTER TABLE hr_jobs MODIFY status ENUM('draft', 'active', 'pending_approval', 'live', 'closed') DEFAULT 'active'");
 
         DB::table('hr_jobs')
@@ -18,6 +22,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
         DB::statement("ALTER TABLE hr_jobs MODIFY status ENUM('draft', 'active', 'pending_approval', 'live', 'closed') DEFAULT 'draft'");
 
         DB::table('hr_jobs')
@@ -27,5 +35,4 @@ return new class extends Migration
         DB::statement("ALTER TABLE hr_jobs MODIFY status ENUM('draft', 'active', 'closed') DEFAULT 'active'");
     }
 };
-
 

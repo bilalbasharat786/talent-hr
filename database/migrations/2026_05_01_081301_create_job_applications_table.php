@@ -15,7 +15,18 @@ Schema::create('job_applications', function (Blueprint $table) {
     $table->id();
     $table->foreignId('job_id')->constrained('hr_jobs')->cascadeOnDelete();
     $table->foreignId('candidate_id')->constrained('users')->cascadeOnDelete();
-    $table->enum('status', ['applied', 'shortlisted', 'rejected', 'hired'])->default('applied');
+    $table->enum('status', [
+        'applied',
+        'assessment_pending',
+        'submitted',
+        'passed',
+        'failed',
+        'shortlisted',
+        'second_task_assigned',
+        'interview_scheduled',
+        'hired',
+        'rejected',
+    ])->default('applied');
     $table->text('rejection_reason')->nullable();
     $table->timestamps();
 });
