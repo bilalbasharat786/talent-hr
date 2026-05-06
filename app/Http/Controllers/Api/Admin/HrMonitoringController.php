@@ -15,7 +15,7 @@ class HrMonitoringController extends Controller
         $hrs = User::query()
             ->where('role', 'hr')
             ->withCount(['hrJobs as jobs_created'])
-            ->with(['hrJobs.company:id,name'])
+            ->with(['hrJobs.company:id,name', 'company:id,name'])
             ->when($request->status, function ($query) use ($request) {
                 $query->where('status', $request->status);
             })
@@ -29,7 +29,8 @@ class HrMonitoringController extends Controller
             $rejected = JobApplication::whereIn('job_id', $jobIds)->where('status', 'rejected')->count();
             $shortlisted = JobApplication::whereIn('job_id', $jobIds)->where('status', 'shortlisted')->count();
 
-            $hr->company = optional($hr->hrJobs->first()?->company)->name;
+            $hr->company_name = optional($hr->hrJobs->first()?->company)->name
+                ?? optional($hr->company)->name;
             $hr->rejection_rate = $totalApplications > 0 ? round(($rejected / $totalApplications) * 100, 2) : 0;
             $hr->shortlist_rate = $totalApplications > 0 ? round(($shortlisted / $totalApplications) * 100, 2) : 0;
 

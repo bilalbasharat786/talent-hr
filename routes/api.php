@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Admin\SupervisorVerificationController;
 use App\Http\Controllers\Api\Admin\InternshipVerificationController;
 use App\Http\Controllers\Api\Admin\UserManagementController;
 use App\Http\Controllers\Api\Admin\HrMonitoringController;
+use App\Http\Controllers\Api\Admin\JobApprovalController;
 use App\Http\Controllers\Api\Admin\FraudLogController;
 use App\Http\Controllers\Api\Admin\DashboardController;
 use App\Http\Controllers\Api\Admin\SecureFileController;
@@ -86,6 +87,11 @@ Route::prefix('admin')->group(function () {
 
 
 
+
+        Route::get('/jobs', [JobApprovalController::class, 'index']);
+        Route::get('/jobs/{job}', [JobApprovalController::class, 'show']);
+        Route::post('/jobs/{job}/approve', [JobApprovalController::class, 'approve']);
+        Route::post('/jobs/{job}/reject', [JobApprovalController::class, 'reject']);
 
         Route::get('/activity-logs', [ActivityLogController::class, 'index']);
 

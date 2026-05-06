@@ -133,7 +133,8 @@ class ProcessSubmissionJob implements ShouldQueue
 
     private function determineCheatingFlag(AssessmentSession $session, string $plagiarismReport, bool $autoSubmitted): string
     {
-        if ($session->violation_count >= 5 || $autoSubmitted) {
+        // Per Candidate doc: 5+ violations => cheating. Timer-driven auto-submit alone is NOT cheating.
+        if ($session->violation_count >= 5) {
             return 'cheating_detected';
         }
 

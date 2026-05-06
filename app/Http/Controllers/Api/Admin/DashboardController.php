@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
+use App\Models\Assessment;
 use App\Models\Company;
 use App\Models\FraudLog;
 use App\Models\HrJob;
@@ -23,7 +24,9 @@ class DashboardController extends Controller
                     + Internship::where('status', 'pending')->count(),
                 'total_candidates' => User::where('role', 'candidate')->count(),
                 'total_jobs' => HrJob::count(),
-                'total_assessments' => 0,
+                'live_jobs' => HrJob::where('status', 'live')->count(),
+                'pending_job_approvals' => HrJob::where('status', 'pending_approval')->count(),
+                'total_assessments' => Assessment::count(),
                 'fraud_alerts_count' => FraudLog::whereIn('status', ['open', 'flagged'])->count(),
             ],
             'recent_activities' => ActivityLog::with('user:id,name,email,role')
